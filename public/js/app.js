@@ -248,14 +248,19 @@ function initSocket() {
   socket.on('room_created', ({ gameId: id }) => {
     gameId = id;
     document.getElementById('game-room-id').textContent = id;
+    // Go to game screen right away so Start Game button is visible
+    showScreen('game');
+    buildBoard();
   });
 
   socket.on('player_joined', ({ username }) => showGameNotif(`${username} joined!`));
   socket.on('player_left', ({ username }) => showGameNotif(`${username} left.`));
 
   socket.on('game_started', () => {
-    showScreen('game');
-    buildBoard();
+    if (!document.getElementById('game-screen').classList.contains('active')) {
+      showScreen('game');
+      buildBoard();
+    }
   });
 
   socket.on('game_state', (state) => {
@@ -263,8 +268,8 @@ function initSocket() {
     gameId = state.id;
     document.getElementById('game-room-id').textContent = state.id;
 
-    // If we're in a game but on lobby screen, switch
-    if (state.state === 'playing' && !document.getElementById('game-screen').classList.contains('active')) {
+    // Switch to game screen whenever we have a game state
+    if (!document.getElementById('game-screen').classList.contains('active')) {
       showScreen('game');
       buildBoard();
     }
@@ -510,12 +515,23 @@ function renderTurnPanel(state) {
 
   if (state.state === 'lobby') {
     const isHost = state.players[0]?.userId === currentUser.id;
-    infoEl.textContent = `Waiting for players... ${state.players.length}/${state.settings.maxPlayers}`;
-    actEl.innerHTML = isHost
-      ? `<button class="btn-primary" id="start-game-btn">🚀 Start Game (${state.players.length} players)</button>`
-      : '<div style="color:var(--text2);font-size:12px">Waiting for host to start...</div>';
+    infoEl.innerHTML = `
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px">🎲 Waiting room</div>
+      <div style="color:var(--text2);font-size:12px">Players: ${state.players.length} / ${state.settings.maxPlayers}</div>
+      <div style="margin-top:8px;font-size:12px">
+        ${state.players.map(p => `<div style="padding:2px 0">${AVATARS[p.avatar]||'?'} ${escHtml(p.username)}</div>`).join('')}
+      </div>
+      ${isHost ? '' : '<div style="color:var(--text2);font-size:12px;margin-top:8px">Waiting for host to start...</div>'}
+    `;
     if (isHost) {
-      document.getElementById('start-game-btn').onclick = () => socket.emit('start_game');
+      actEl.innerHTML = `<button class="btn-primary" id="start-game-btn" style="width:100%;padding:14px;font-size:16px">
+        🚀 Start Game (${state.players.length} player${state.players.length > 1 ? 's' : ''})
+      </button>`;
+      // Attach after setting innerHTML
+      const btn = document.getElementById('start-game-btn');
+      if (btn) btn.onclick = () => { btn.disabled = true; btn.textContent = 'Starting...'; socket.emit('start_game'); };
+    } else {
+      actEl.innerHTML = '';
     }
     return;
   }
