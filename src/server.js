@@ -24,7 +24,8 @@ db.initDb().then(() => {
 
   app.use('/api', apiRouter);
   app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
-
+  app.status(404).send(`<h1>Page not found</h1>`)
+  
   setupSockets(io);
 
   server.listen(PORT, () => {
