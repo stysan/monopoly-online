@@ -11,7 +11,7 @@ const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST'] }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10498;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -24,9 +24,9 @@ db.initDb().then(() => {
 
   app.use('/api', apiRouter);
   app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
-
+  
   setupSockets(io);
-
+  
   server.listen(PORT, () => {
     console.log(`\n🎲 Monopoly Online running at http://localhost:${PORT}\n`);
   });
