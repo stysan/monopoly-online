@@ -24,10 +24,11 @@ db.initDb().then(() => {
 
   app.use('/api', apiRouter);
   app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
-  app.status(404).send(`<h1>Page not found</h1>`)
   
   setupSockets(io);
-
+  
+  app.use((req, res) => res.status(404).send(`<h1>Page not found</h1>`))
+  
   server.listen(PORT, () => {
     console.log(`\n🎲 Monopoly Online running at http://localhost:${PORT}\n`);
   });
