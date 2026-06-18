@@ -1,6 +1,11 @@
+> [!WARNING]
+> This is a fully vibe-coded game. It used up 2 free 5-hour limits on Claude Sonnet 4.6.
+>
+> Please do **NOT** try to deploy this for yourself. This was only made for me and a couple of my friends; security is not guaranteed.
+
 # 🎩 Monopoly Online
 
-Vibecoded monopoly game. Used up 2 5-hour limits for free Claude Sonnet 4.6. Full-featured online Monopoly with real-time multiplayer, accounts, and leaderboards.
+Full-featured online Monopoly with real-time multiplayer, accounts, and leaderboards.
 
 ## Stack
 - **Backend**: Node.js, Express, Socket.IO
