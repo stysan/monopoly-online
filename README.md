@@ -1,6 +1,6 @@
 # 🎩 Monopoly Online
 
-Full-featured online Monopoly with real-time multiplayer, accounts, and leaderboards.
+Vibecoded monopoly game. Used up 2 5-hour limits for free Claude Sonnet 4.6. Full-featured online Monopoly with real-time multiplayer, accounts, and leaderboards.
 
 ## Stack
 - **Backend**: Node.js, Express, Socket.IO
