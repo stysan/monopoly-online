@@ -27,8 +27,6 @@ db.initDb().then(() => {
   
   setupSockets(io);
   
-  app.use((req, res) => res.status(404).send(`<h1>Page not found</h1>`))
-  
   server.listen(PORT, () => {
     console.log(`\n🎲 Monopoly Online running at http://localhost:${PORT}\n`);
   });
