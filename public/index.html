@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monopoly Online</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" class="screen active">
+  <div class="auth-bg">
+    <div class="auth-logo">
+      <div class="logo-icon">🎩</div>
+      <h1>MONOPOLY<span>ONLINE</span></h1>
+      <p>Play the classic board game with friends worldwide</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Login</button>
+        <button class="auth-tab" data-tab="register">Register</button>
+      </div>
+      <div class="auth-form" id="login-form">
+        <input type="text" id="login-username" placeholder="Username" autocomplete="username">
+        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+        <button class="btn-primary" id="login-btn">Sign In</button>
+      </div>
+      <div class="auth-form hidden" id="register-form">
+        <input type="text" id="reg-username" placeholder="Username (3-20 chars)" autocomplete="username">
+        <input type="password" id="reg-password" placeholder="Password (min 4 chars)" autocomplete="new-password">
+        <div class="avatar-pick">
+          <label>Choose your token:</label>
+          <div class="avatar-grid" id="avatar-grid"></div>
+        </div>
+        <button class="btn-primary" id="register-btn">Create Account</button>
+      </div>
+      <div id="auth-error" class="error-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOBBY SCREEN -->
+<div id="lobby-screen" class="screen">
+  <header class="lobby-header">
+    <div class="header-logo">🎩 <span>MONOPOLY</span></div>
+    <div class="header-user">
+      <span id="header-avatar" class="player-token"></span>
+      <span id="header-username"></span>
+      <span id="online-count" class="online-badge"></span>
+      <button class="btn-sm" id="profile-btn">Profile</button>
+      <button class="btn-sm btn-danger" id="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div class="lobby-body">
+    <div class="lobby-left">
+      <div class="panel">
+        <h2>🎮 Quick Play</h2>
+        <button class="btn-primary full-width" id="create-room-btn">Create Room</button>
+        <div class="create-options hidden" id="create-options">
+          <input type="text" id="room-name" placeholder="Room name (optional)">
+          <label><input type="checkbox" id="opt-auction" checked> Auction on decline</label>
+          <label><input type="checkbox" id="opt-freeparking"> Free Parking jackpot</label>
+          <label>Max players:
+            <select id="opt-maxplayers">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4" selected>4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </label>
+          <label><input type="checkbox" id="opt-private"> Private room</label>
+          <button class="btn-primary" id="confirm-create-btn">🚀 Create Game</button>
+        </div>
+        <div class="divider">or</div>
+        <div class="join-by-code">
+          <input type="text" id="room-code" placeholder="Enter room code" maxlength="8">
+          <button class="btn-secondary" id="join-code-btn">Join</button>
+        </div>
+      </div>
+
+      <div class="panel" id="leaderboard-panel">
+        <h2>🏆 Leaderboard</h2>
+        <div class="lb-tabs">
+          <button class="lb-tab active" data-type="wins">Wins</button>
+          <button class="lb-tab" data-type="winrate">Win %</button>
+          <button class="lb-tab" data-type="richest">Richest</button>
+          <button class="lb-tab" data-type="landlord">Properties</button>
+          <button class="lb-tab" data-type="rentking">Rent King</button>
+        </div>
+        <div id="leaderboard-list" class="lb-list"></div>
+      </div>
+    </div>
+
+    <div class="lobby-right">
+      <div class="panel">
+        <div class="rooms-header">
+          <h2>🌐 Open Rooms</h2>
+          <button class="btn-sm" id="refresh-rooms-btn">↻ Refresh</button>
+        </div>
+        <div id="rooms-list" class="rooms-list">
+          <div class="empty-state">No open rooms. Create one!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profile-modal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>👤 Profile</h2>
+      <button class="modal-close" id="close-profile">✕</button>
+    </div>
+    <div id="profile-content"></div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen" class="screen">
+  <div class="game-layout">
+
+    <!-- Board -->
+    <div class="board-container">
+      <div id="monopoly-board" class="monopoly-board">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="game-panel">
+      <div class="game-header">
+        <div class="game-id-badge">Room: <span id="game-room-id"></span></div>
+        <button class="btn-sm btn-danger" id="leave-game-btn">Leave</button>
+      </div>
+
+      <!-- Players -->
+      <div class="players-panel">
+        <h3>Players</h3>
+        <div id="players-list"></div>
+      </div>
+
+      <!-- Turn Info -->
+      <div class="turn-panel" id="turn-panel">
+        <div id="turn-info"></div>
+        <div class="action-buttons" id="action-buttons"></div>
+      </div>
+
+      <!-- Property Panel -->
+      <div class="property-panel" id="property-panel">
+        <h3>Your Properties</h3>
+        <div id="my-properties"></div>
+      </div>
+
+      <!-- Auction Panel -->
+      <div class="auction-panel hidden" id="auction-panel">
+        <h3>🔨 Auction</h3>
+        <div id="auction-info"></div>
+        <div class="bid-row">
+          <input type="number" id="bid-amount" min="1" placeholder="Your bid">
+          <button class="btn-primary" id="place-bid-btn">Bid</button>
+        </div>
+        <button class="btn-sm btn-danger" id="end-auction-btn">End Auction</button>
+      </div>
+
+      <!-- Trade Panel -->
+      <div class="trade-panel hidden" id="trade-panel">
+        <h3>🤝 Trade Offer</h3>
+        <div id="trade-info"></div>
+        <div id="trade-actions"></div>
+      </div>
+
+      <!-- Chat -->
+      <div class="chat-panel">
+        <h3>💬 Chat</h3>
+        <div id="chat-messages" class="chat-messages"></div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Type a message..." maxlength="200">
+          <button id="chat-send-btn">Send</button>
+        </div>
+      </div>
+
+      <!-- Log -->
+      <div class="log-panel">
+        <h3>📋 Game Log</h3>
+        <div id="game-log" class="game-log"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dice Overlay -->
+  <div id="dice-overlay" class="dice-overlay hidden">
+    <div class="dice-container">
+      <div class="die" id="die1"></div>
+      <div class="die" id="die2"></div>
+    </div>
+    <div id="dice-result-text"></div>
+  </div>
+
+  <!-- Card Modal -->
+  <div id="card-modal" class="modal hidden">
+    <div class="modal-content card-modal-content">
+      <div id="card-type-badge"></div>
+      <div id="card-text"></div>
+      <button class="btn-primary" id="card-ok-btn">OK</button>
+    </div>
+  </div>
+
+  <!-- Property Detail Modal -->
+  <div id="prop-modal" class="modal hidden">
+    <div class="modal-content prop-modal-content">
+      <div class="modal-header">
+        <h2 id="prop-modal-name"></h2>
+        <button class="modal-close" id="close-prop-modal">✕</button>
+      </div>
+      <div id="prop-modal-content"></div>
+      <div id="prop-modal-actions" class="prop-modal-actions"></div>
+    </div>
+  </div>
+
+  <!-- Trade Modal -->
+  <div id="trade-modal" class="modal hidden">
+    <div class="modal-content trade-modal-content">
+      <div class="modal-header">
+        <h2>🤝 Propose Trade</h2>
+        <button class="modal-close" id="close-trade-modal">✕</button>
+      </div>
+      <div id="trade-modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Winner Modal -->
+  <div id="winner-modal" class="modal hidden">
+    <div class="modal-content winner-content">
+      <div class="winner-trophy">🏆</div>
+      <h1 id="winner-name"></h1>
+      <p id="winner-subtitle"></p>
+      <div id="final-stats"></div>
+      <button class="btn-primary" id="back-to-lobby-btn">Back to Lobby</button>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
